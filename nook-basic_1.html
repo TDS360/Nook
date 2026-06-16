@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nook — Track Every Book You Read</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,500;1,700&family=Nunito+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:    #faf7f2;
+      --bg2:   #f2ede5;
+      --ink:   #2c1a10;
+      --ink2:  #7a6455;
+      --ink3:  #b8a898;
+      --amber: #d97706;
+      --at:    rgba(217,119,6,0.1);
+      --b:     rgba(44,26,16,0.09);
+    }
+
+    body {
+      font-family: 'Nunito Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      height: 60px; padding: 0 5%;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(250,247,242,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--b);
+    }
+    .logo {
+      font-family: 'Lora', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--ink); letter-spacing: -0.01em;
+    }
+    .logo span { color: var(--amber); }
+    .nav-links { display:flex; gap:24px; list-style:none; }
+    .nav-links a { font-size:0.875rem; font-weight:600; color:var(--ink2); transition:color 0.2s; }
+    .nav-links a:hover { color:var(--ink); }
+    .btn-nav {
+      padding: 9px 22px; border-radius: 100px;
+      background: var(--ink); color: var(--bg);
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.875rem; font-weight: 700;
+      border: none; transition: all 0.2s;
+    }
+    .btn-nav:hover { background: var(--amber); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 5% 72px;
+      text-align: center;
+    }
+    .hero-label {
+      display: inline-block;
+      font-size: 0.75rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--amber); margin-bottom: 18px;
+    }
+    .hero h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-weight: 700; letter-spacing: -0.025em;
+      line-height: 1.12; color: var(--ink);
+      max-width: 640px; margin: 0 auto 18px;
+    }
+    .hero h1 em { font-style: italic; color: var(--amber); }
+    .hero-sub {
+      font-size: 1.05rem; color: var(--ink2);
+      max-width: 440px; margin: 0 auto 34px;
+      line-height: 1.75;
+    }
+    .hero-btns { display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; }
+    .btn-primary {
+      padding: 14px 30px; border-radius: 100px;
+      background: var(--ink); color: var(--bg);
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.98rem; font-weight: 700;
+      border: none; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--amber); transform: translateY(-1px); }
+    .btn-outline {
+      padding: 13px 28px; border-radius: 100px;
+      background: transparent; border: 1.5px solid var(--b);
+      color: var(--ink); font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.98rem; font-weight: 700; transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--ink); }
+    .hero-proof {
+      font-size: 0.8rem; color: var(--ink3); margin-bottom: 56px;
+    }
+    .hero-proof span { color: var(--amber); font-weight: 700; }
+
+    /* Phone mockup */
+    .phone-wrap {
+      display: flex; justify-content: center;
+      position: relative;
+    }
+    .phone {
+      width: 210px; height: 400px;
+      border-radius: 40px;
+      background: var(--ink);
+      border: 7px solid var(--ink);
+      box-shadow: 0 28px 70px rgba(44,26,16,0.28);
+      overflow: hidden; position: relative;
+    }
+    .phone::before {
+      content: '';
+      position: absolute; top: 12px; left: 50%;
+      transform: translateX(-50%);
+      width: 64px; height: 20px; border-radius: 10px;
+      background: var(--ink);
+      z-index: 2;
+    }
+    .phone-screen {
+      width: 100%; height: 100%;
+      background: linear-gradient(160deg, #1a120a 0%, #2c1a10 40%, #3d2416 100%);
+      padding: 48px 16px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .p-row {
+      background: rgba(255,255,255,0.07);
+      border-radius: 10px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .p-book-cover {
+      width: 28px; height: 38px; border-radius: 3px; flex-shrink: 0;
+    }
+    .p-title { font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.8); margin-bottom: 3px; }
+    .p-author { font-size: 7.5px; color: rgba(255,255,255,0.35); margin-bottom: 5px; }
+    .p-bar-bg { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); width: 100%; }
+    .p-bar-fill { height: 100%; border-radius: 2px; background: var(--amber); }
+    .p-stats-row {
+      display: flex; gap: 6px;
+    }
+    .p-stat {
+      flex: 1; background: rgba(255,255,255,0.07);
+      border-radius: 8px; padding: 8px;
+      text-align: center;
+    }
+    .p-stat-n { font-size: 11px; font-weight: 700; color: var(--amber); }
+    .p-stat-l { font-size: 7px; color: rgba(255,255,255,0.35); margin-top: 1px; }
+    .p-streak {
+      background: linear-gradient(135deg, rgba(217,119,6,0.2), rgba(217,119,6,0.1));
+      border: 1px solid rgba(217,119,6,0.25);
+      border-radius: 10px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .p-fire { font-size: 16px; }
+    .p-streak-text { font-size: 9px; color: rgba(255,255,255,0.7); }
+    .p-streak-num { font-size: 11px; font-weight: 700; color: var(--amber); }
+
+    /* ── FEATURES ── */
+    .features { padding: 80px 5%; background: var(--bg2); }
+    .features-inner { max-width: 1100px; margin: 0 auto; }
+    .sec-label { font-size: 0.71rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: var(--amber); margin-bottom: 10px; text-align: center; }
+    .sec-h {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      text-align: center; margin-bottom: 48px;
+      color: var(--ink);
+    }
+    .feat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .feat {
+      background: var(--bg);
+      border: 1px solid var(--b);
+      border-radius: 16px; padding: 30px 26px;
+      transition: box-shadow 0.25s, transform 0.25s;
+    }
+    .feat:hover { box-shadow: 0 8px 32px rgba(44,26,16,0.09); transform: translateY(-4px); }
+    .feat-ic {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: var(--at); border: 1px solid rgba(217,119,6,0.18);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 18px;
+    }
+    .feat-h { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 9px; }
+    .feat-p { font-size: 0.875rem; color: var(--ink2); line-height: 1.72; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials { padding: 80px 5%; }
+    .test-inner { max-width: 1100px; margin: 0 auto; }
+    .test-top { text-align: center; margin-bottom: 48px; }
+    .test-count {
+      font-family: 'Lora', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; letter-spacing: -0.02em;
+      color: var(--ink); margin-bottom: 6px;
+    }
+    .test-count span { color: var(--amber); }
+    .test-sub { font-size: 0.95rem; color: var(--ink2); }
+    .test-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .tcard {
+      background: var(--bg2); border-radius: 14px; padding: 24px;
+      border: 1px solid var(--b);
+    }
+    .tcard-stars { color: var(--amber); font-size: 0.82rem; letter-spacing: 2px; margin-bottom: 12px; }
+    .tcard-text { font-size: 0.9rem; color: var(--ink2); line-height: 1.75; margin-bottom: 18px; }
+    .tcard-name { font-size: 0.85rem; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+    .tcard-role { font-size: 0.78rem; color: var(--ink3); }
+
+    /* ── CTA ── */
+    .cta-sec { padding: 80px 5%; background: var(--ink); }
+    .cta-in {
+      max-width: 600px; margin: 0 auto;
+      text-align: center;
+    }
+    .cta-label { font-size: 0.71rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em; color: rgba(217,119,6,0.8); margin-bottom: 14px; }
+    .cta-h {
+      font-family: 'Lora', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700; letter-spacing: -0.025em;
+      line-height: 1.15; color: white; margin-bottom: 14px;
+    }
+    .cta-h em { font-style: italic; color: var(--amber); }
+    .cta-p { font-size: 0.98rem; color: rgba(255,255,255,0.45); line-height: 1.75; margin-bottom: 34px; }
+    .cta-btns { display: flex; justify-content: center; gap: 12px; }
+    .btn-amber {
+      padding: 14px 30px; border-radius: 100px;
+      background: var(--amber); color: white;
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.98rem; font-weight: 700;
+      border: none; transition: all 0.2s;
+    }
+    .btn-amber:hover { background: #b45309; transform: translateY(-1px); }
+    .btn-ghost-w {
+      padding: 13px 26px; border-radius: 100px;
+      background: transparent; border: 1.5px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.55);
+      font-family: 'Nunito Sans', sans-serif;
+      font-size: 0.98rem; font-weight: 700; transition: all 0.2s;
+    }
+    .btn-ghost-w:hover { border-color: rgba(255,255,255,0.35); color: white; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #1a100a;
+      padding: 44px 5% 28px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .foot-in {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px; margin-bottom: 36px;
+    }
+    .foot-logo { font-family:'Lora',serif; font-size:1.3rem; font-weight:700; color:white; margin-bottom:10px; }
+    .foot-logo span { color:var(--amber); }
+    .foot-desc { font-size:0.875rem; color:rgba(255,255,255,0.3); line-height:1.72; max-width:240px; }
+    .fc h5 { font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.25); margin-bottom:13px; }
+    .fc ul { list-style:none; display:flex; flex-direction:column; gap:9px; }
+    .fc a { font-size:0.875rem; color:rgba(255,255,255,0.38); transition:color 0.2s; }
+    .fc a:hover { color:white; }
+    .foot-bot {
+      max-width:1100px; margin:0 auto;
+      display:flex; justify-content:space-between; align-items:center;
+      border-top:1px solid rgba(255,255,255,0.05); padding-top:22px;
+      font-size:0.8rem; color:rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="logo">N<span>oo</span>k</div>
+  <ul class="nav-links">
+    <li><a href="#">Features</a></li>
+    <li><a href="#">How It Works</a></li>
+    <li><a href="#">Pricing</a></li>
+  </ul>
+  <button class="btn-nav">Try Free</button>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-label">Personal Reading Tracker</div>
+  <h1>Every book you've read.<br>Every one <em>you will.</em></h1>
+  <p class="hero-sub">Nook keeps your reading life organized — track what you've read, set yearly goals, and build a streak worth protecting.</p>
+  <div class="hero-btns">
+    <button class="btn-primary">
+      <span>⬇</span> Download Free
+    </button>
+    <button class="btn-outline">See How It Works</button>
+  </div>
+  <p class="hero-proof"><span>★ 4.9</span> — Loved by 12,000+ readers on iOS &amp; Android</p>
+
+  <!-- Phone mockup -->
+  <div class="phone-wrap">
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="p-row">
+          <div class="p-book-cover" style="background:linear-gradient(135deg,#d97706,#92400e)"></div>
+          <div style="flex:1">
+            <div class="p-title">Atomic Habits</div>
+            <div class="p-author">James Clear</div>
+            <div class="p-bar-bg"><div class="p-bar-fill" style="width:72%"></div></div>
+          </div>
+        </div>
+        <div class="p-row">
+          <div class="p-book-cover" style="background:linear-gradient(135deg,#1a4a3a,#2d7a5f)"></div>
+          <div style="flex:1">
+            <div class="p-title">The Psychology of Money</div>
+            <div class="p-author">Morgan Housel</div>
+            <div class="p-bar-bg"><div class="p-bar-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="p-row">
+          <div class="p-book-cover" style="background:linear-gradient(135deg,#4c1d95,#6d28d9)"></div>
+          <div style="flex:1">
+            <div class="p-title">Deep Work</div>
+            <div class="p-author">Cal Newport</div>
+            <div class="p-bar-bg"><div class="p-bar-fill" style="width:38%"></div></div>
+          </div>
+        </div>
+        <div class="p-stats-row">
+          <div class="p-stat">
+            <div class="p-stat-n">24</div>
+            <div class="p-stat-l">Books read</div>
+          </div>
+          <div class="p-stat">
+            <div class="p-stat-n">6,240</div>
+            <div class="p-stat-l">Pages total</div>
+          </div>
+          <div class="p-stat">
+            <div class="p-stat-n">34</div>
+            <div class="p-stat-l">Goal: 36</div>
+          </div>
+        </div>
+        <div class="p-streak">
+          <div class="p-fire">🔥</div>
+          <div>
+            <div class="p-streak-num">14-day streak</div>
+            <div class="p-streak-text">Keep it going!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ── -->
+<section class="features">
+  <div class="features-inner">
+    <div class="sec-label">Features</div>
+    <h2 class="sec-h">Everything a reader needs</h2>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-ic">📚</div>
+        <h3 class="feat-h">Your Reading Library</h3>
+        <p class="feat-p">Add books with a quick search, mark them as reading, finished, or want-to-read. Your entire library in one clean list.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">📊</div>
+        <h3 class="feat-h">Reading Stats</h3>
+        <p class="feat-p">See pages per day, your average reading speed, and a yearly breakdown. Watch your reading habit grow over time.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">🔥</div>
+        <h3 class="feat-h">Daily Streaks</h3>
+        <p class="feat-p">Log even 10 minutes of reading to keep your streak alive. Smart reminders help you stay consistent without the guilt.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="testimonials">
+  <div class="test-inner">
+    <div class="test-top">
+      <div class="test-count"><span>12,000+</span> readers</div>
+      <p class="test-sub">are already tracking their reading with Nook</p>
+    </div>
+    <div class="test-grid">
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"I read 18 books last year without tracking anything. This year I've already hit 24 and it's only September. Nook keeps me honest."</p>
+        <div class="tcard-name">Priya Sharma</div>
+        <div class="tcard-role">Product Designer, London</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"The stats page is genuinely motivating. Seeing my 30-day streak made me pick up my book at 11pm just to protect it. Highly recommend."</p>
+        <div class="tcard-name">Marcus Webb</div>
+        <div class="tcard-role">Software Engineer, Berlin</div>
+      </div>
+      <div class="tcard">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-text">"Simple, beautiful, and does exactly what it promises. I've tried every reading app out there and this is the one I actually stick with."</p>
+        <div class="tcard-name">Claire Fontaine</div>
+        <div class="tcard-role">Teacher, Montreal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-sec">
+  <div class="cta-in">
+    <div class="cta-label">Get Started Free</div>
+    <h2 class="cta-h">Your best reading year <em>starts here.</em></h2>
+    <p class="cta-p">Free forever for up to 10 books. Upgrade anytime. No credit card required.</p>
+    <div class="cta-btns">
+      <button class="btn-amber">Download for Free</button>
+      <button class="btn-ghost-w">View Pricing</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="foot-in">
+    <div>
+      <div class="foot-logo">N<span>oo</span>k</div>
+      <p class="foot-desc">A simple reading tracker for people who love books and want to read more of them.</p>
+    </div>
+    <div class="fc">
+      <h5>App</h5>
+      <ul>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Changelog</a></li>
+        <li><a href="#">Download</a></li>
+      </ul>
+    </div>
+    <div class="fc">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bot">
+    <span>© 2026 Nook App Inc.</span>
+    <span>Made for readers, by readers.</span>
+  </div>
+</footer>
+
+</body>
+</html>
